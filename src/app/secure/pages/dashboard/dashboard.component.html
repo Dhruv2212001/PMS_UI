@@ -1,0 +1,892 @@
+<div style="height: calc(100vh - 64px)" class="overflow-hidden">
+  <div class="container-new mt-4 p-0">
+    <mat-card>
+      <div>
+        <div class="title">
+          <div class="px-3 pt-3">
+            <h2>All Products</h2>
+          </div>
+          <div style="display: flex; align-items: center" class="px-3 gap-2">
+            <div class="pt-4 px-3">
+              <mat-form-field class="example-full-width" appearance="outline">
+                <mat-label>Search</mat-label>
+                <input matInput (keyup)="applyFilter($event)" />
+                <mat-icon matSuffix>search</mat-icon>
+              </mat-form-field>
+            </div>
+
+            <div class="gap-2 d-flex">
+              <button class="buttons px-3" *ngIf="isProductImportable" mat-raised-button color="primary"
+                (click)="openImport(ImportExcel)" matTooltip="Import Product">
+                Import <mat-icon>file_upload</mat-icon>
+              </button>
+              <button class="buttons px-3" *ngIf="isProductExportable" mat-raised-button color="primary"
+                (click)="export()" matTooltip="Export Product">
+                Export <mat-icon>file_download</mat-icon>
+              </button>
+            </div>
+            <button class="buttons px-3" mat-raised-button color="primary" *ngIf="isProductAddable"
+              (click)="openpopup(viewProductForm)" matTooltip="Click to Add Product">
+              Add Product <mat-icon>add</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </mat-card>
+
+    <div class="card-container box-scroll">
+      <div *ngIf="filteredCards.length === 0" class="col-12 text-center">
+        <p class="no-products-message">Product is not available.</p>
+      </div>
+      <div *ngFor="let product of filteredCards; let i = index">
+        <div class="card shadow-sm" (click)="isProductViewable ? userViewData(product.id) : null">
+          <div class="card-content">
+            <div class="image-container">
+              <img *ngIf="product.attachments[0]?.isPrimary == true" [src]="product.attachments[0].filePath"
+                class="card-img" alt="Image">
+
+              <img *ngIf="product.attachments[0]?.isPrimary == false || product.attachments.length == 0"
+                src="../../../../assets/dummyProductImage.png" class="card-img">
+            </div>
+            <div class="position-absolute end-0 top-0" *ngIf="isProductEditable || isProductDeletable">
+              <button mat-icon-button [matMenuTriggerFor]="menu" (click)="stopPropagation($event)">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #menu="matMenu">
+                <button mat-menu-item *ngIf="isProductEditable" (click)="editProduct(viewProductForm, product)">
+                  <mat-icon>edit</mat-icon>Edit</button>
+                <button mat-menu-item *ngIf="isProductDeletable" (click)="deleteProduct(product)"><mat-icon
+                    color="warn">delete</mat-icon> Delete</button>
+              </mat-menu>
+            </div>
+            <div class="text-container">
+              <h5 class="m-0">{{ product.sku }}</h5>
+              <h6 class="card-title m-0">
+                {{ product.productName.length > 30 ? (product.productName | slice:0:30) + '...' : product.productName }}
+              </h6>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #ImportExcel>
+  <div class="dialog-header">
+    <ng-container>
+      <span class="title" mat-dialog-title>Import Excel</span>
+    </ng-container>
+    <button class="closepopup m-2" mat-icon-button color="primary" matDialogClose matTooltip="Close form" id="clicked">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-divider class="mat-divider"></mat-divider>
+
+  <div class="dialog-body p-4">
+    <div class="form-group mb-3">
+      <label for="fileInput" class="form-label">Select Excel File:</label>
+      <input id="fileInput" type="file" class="form-control" (change)="onFileSelected($event)" accept=".xls,.xlsx" />
+    </div>
+
+  </div>
+  <div class="d-flex justify-content-start px-3">
+    <button mat-raised-button class="btn btn-primary" type="submit" (click)="uploadFile()"
+      mat-dialog-close>Upload</button>
+  </div>
+</ng-template>
+
+
+
+<ng-template #viewProductForm>
+  <div class="dialog-header">
+    <ng-container>
+      <span class="title" mat-dialog-title>{{ dialogTitle }}</span>
+    </ng-container>
+    <button class="closepopup m-2" (click)="closepopup()" mat-icon-button color="primary" matDialogClose
+      matTooltip="Close form" id="clicked">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-divider></mat-divider>
+  <form [formGroup]="ProductForm" class="test">
+
+    <mat-tab-group>
+      <mat-tab label="Basic Details">
+        <mat-dialog-content class="mat-typography" style="min-height: 660px;">
+
+          <div class="tab-content">
+            <div class="row">
+              <div class="col-md-6">
+                <mat-form-field class="w-100" appearance="outline">
+                  <mat-label>Product Name</mat-label>
+                  <input matInput formControlName="productName" placeholder="Enter Product Name" />
+                  <mat-error *ngIf="
+                ProductForm.get('productName')?.invalid &&
+                ProductForm.get('productName')?.touched
+              ">
+                    Product Name is required
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div class="col-md-6">
+                <mat-form-field class="w-100" appearance="outline">
+                  <mat-label>SKU</mat-label>
+                  <input matInput formControlName="sku" placeholder="Enter SKU" />
+                  <mat-error *ngIf="
+                ProductForm.get('sku')?.invalid &&
+                ProductForm.get('sku')?.touched
+              ">
+                    SKU is required
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <mat-form-field class="w-100" appearance="outline">
+                  <mat-label>HSN</mat-label>
+                  <input matInput formControlName="hsn" placeholder="Enter HSN" />
+                </mat-form-field>
+              </div>
+              <div class="col-md-6">
+                <mat-form-field class="w-100" appearance="outline">
+                  <mat-label>GST</mat-label>
+                  <input matInput formControlName="gst" placeholder="Enter GST" (keypress)="validateNumeric($event)" />
+                </mat-form-field>
+              </div>
+            </div>
+          <div>
+        </div>
+
+
+            <div class="row mb-2">
+              <div class="col-md-6">
+                <mat-form-field class="w-100" appearance="outline">
+                  <mat-label>Stock</mat-label>
+                  <input matInput formControlName="stockInventory" type="number" placeholder="Enter Stock"
+                    (keypress)="validateNumeric($event)" />
+                  <mat-error *ngIf="
+                ProductForm.get('stockInventory')?.invalid &&
+                ProductForm.get('stockInventory')?.touched">
+                    Stock Inventory is required
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div class="col-md-6">
+                <mat-form-field class="w-100" appearance="outline">
+                  <mat-label>Master Cartoon Quantity</mat-label>
+                  <input matInput formControlName="masterCartoonQuantity" placeholder="Enter Comission"
+                    (keypress)="validateNumeric($event)" />
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="row mb-2">
+              <div class="col-md-6">
+                <mat-form-field class="w-100" appearance="outline">
+                  <mat-label>Imports MRP</mat-label>
+                  <input matInput formControlName="importsMRP" placeholder="Enter Imports MRP"
+                    (keypress)="validateNumeric($event)" />
+                </mat-form-field>
+              </div>
+              <div class="col-md-6">
+                <mat-form-field class="w-100" appearance="outline">
+                  <mat-label>Selling Price</mat-label>
+                  <input matInput formControlName="sellingPrice" placeholder="Enter Selling Price"
+                    (keypress)="validateNumeric($event)" />
+                </mat-form-field>
+              </div>
+            </div>
+
+            <mat-label style="color: black; font-style: oblique">Package Dimension & Weight</mat-label>
+            <mat-divider class="my-2"></mat-divider>
+            <div class="row my-3">
+              <!-- Package Dimensions Section -->
+              <div class="col-md-8">
+                <div formGroupName="packageDimensionValue" class="d-flex align-items-center">
+                  <div class="w-30 pr-2">
+                    <mat-form-field appearance="outline" class="custom-width">
+                      <mat-label>Length</mat-label>
+                      <input matInput formControlName="length" type="number" (keypress)="validateNumeric($event)" />
+                    </mat-form-field>
+                  </div>
+
+                  <div class="w-30 px-2">
+                    <mat-form-field appearance="outline" class="custom-width">
+                      <mat-label>Width</mat-label>
+                      <input matInput formControlName="width" type="number" (keypress)="validateNumeric($event)" />
+                    </mat-form-field>
+                  </div>
+
+                  <div class="w-30 pl-2">
+                    <mat-form-field appearance="outline" class="custom-width">
+                      <mat-label>Height</mat-label>
+                      <input matInput formControlName="height" type="number" (keypress)="validateNumeric($event)" />
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Dimension Unit</mat-label>
+                  <mat-select formControlName="dimensionUnit">
+                    <mat-option *ngFor="let unit of packageDimention" [value]="unit.value">
+                      {{ unit.value }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="row my-3">
+              <div class="col-md-8">
+                <mat-form-field class="w-100" appearance="outline">
+                  <mat-label>Package Weight</mat-label>
+                  <input matInput formControlName="packageWeight" type="number" (keypress)="validateNumeric($event)"
+                    placeholder="Enter Package Weight" />
+                </mat-form-field>
+              </div>
+
+              <div class="col-md-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Weight Unit</mat-label>
+                  <mat-select formControlName="packageWeightunit" placeholder="Weight Unit">
+                    <mat-option value="gm">gm</mat-option>
+                    <mat-option value="kg">kg</mat-option>
+
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <mat-label style="color: black; font-style: oblique">Master Cartoon Dimension & Weight</mat-label>
+            <mat-divider class="my-2"></mat-divider>
+            <div class="row my-3">
+              <div class="col-md-8">
+                <div formGroupName="masterCartoonDimensionValue" class="d-flex">
+                  <div class="w-15 pr-2">
+                    <mat-form-field appearance="outline" class="custom-width">
+                      <mat-label>Length</mat-label>
+                      <input matInput formControlName="length" type="number" (keypress)="validateNumeric($event)" />
+                    </mat-form-field>
+                  </div>
+
+                  <div class="w-15 px-2">
+                    <mat-form-field appearance="outline" class="custom-width">
+                      <mat-label>Width</mat-label>
+                      <input matInput formControlName="width" type="number" (keypress)="validateNumeric($event)" />
+                    </mat-form-field>
+                  </div>
+
+                  <div class="w-15 pl-2">
+                    <mat-form-field appearance="outline" class="custom-width">
+                      <mat-label>Height</mat-label>
+                      <input matInput formControlName="height" type="number" (keypress)="validateNumeric($event)" />
+                    </mat-form-field>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-select formControlName="mastercartoondimensionUnit" placeholder="Dimension unit">
+                    <mat-option *ngFor="let unit of masterCartoonDimention" [value]="unit.value">
+                      {{ unit.value }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="row my-3">
+
+
+              <div class="col-md-8">
+                <mat-form-field class="w-100" appearance="outline">
+                  <mat-label>Master Cartoon Weight</mat-label>
+                  <input matInput formControlName="masterCartoonWeight" placeholder="Enter Box Weight"
+                    (keypress)="validateNumeric($event)" />
+                </mat-form-field>
+              </div>
+
+              <div class="col-md-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-select formControlName="mastercartoonunit" placeholder="Weight Unit">
+                    <mat-option value="gm">gm</mat-option>
+                    <mat-option value="kg">kg</mat-option>
+                    <!-- Add more options if needed -->
+                  </mat-select>
+                </mat-form-field>
+              </div>
+
+            </div>
+
+
+            <mat-label style="color: black; font-style: oblique">Product Dimension & Weight</mat-label>
+            <mat-divider class="my-2"></mat-divider>
+            <div class="row my-3">
+              <div class="col-md-8">
+                <div formGroupName="productdimensionsValue" class="d-flex">
+                  <div class="w-15 pr-2">
+                    <mat-form-field appearance="outline" class="custom-width">
+                      <mat-label>Length</mat-label>
+                      <input matInput formControlName="length" type="number" (keypress)="validateNumeric($event)" />
+                    </mat-form-field>
+                  </div>
+
+                  <div class="w-15 px-2">
+                    <mat-form-field appearance="outline" class="custom-width">
+                      <mat-label>Width</mat-label>
+                      <input matInput formControlName="width" type="number" (keypress)="validateNumeric($event)" />
+                    </mat-form-field>
+                  </div>
+
+                  <div class="w-15 pl-2">
+                    <mat-form-field appearance="outline" class="custom-width">
+                      <mat-label>Height</mat-label>
+                      <input matInput formControlName="height" type="number" (keypress)="validateNumeric($event)" />
+                    </mat-form-field>
+                  </div>
+                </div>
+
+              </div>
+              <div class="col-md-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-select formControlName="productdimensionUnit" placeholder="Dimension Unit">
+                    <mat-option *ngFor="let unit of productDimention" [value]="unit.value">
+                      {{ unit.value }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="row my-3">
+
+              <div class="col-md-8">
+                <mat-form-field class="w-100" appearance="outline">
+                  <mat-label>Product Weight</mat-label>
+                  <input matInput formControlName="productWeight" type="number" placeholder="Enter product Weight"
+                    (keypress)="validateNumeric($event)" />
+                </mat-form-field>
+              </div>
+              <div class="col-md-4">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-select formControlName="productWeightunit" placeholder="Weight Unit">
+                    <mat-option value="gm">gm</mat-option>
+                    <mat-option value="kg">kg</mat-option>
+                    <!-- Add more options if needed -->
+                  </mat-select>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+        </mat-dialog-content>
+
+      </mat-tab>
+      <mat-tab label="Jungle Details">
+        <mat-dialog-content class="mat-typography" style="min-height: 660px;">
+          <div class="tab-content">
+
+            <div class="row mb-2">
+              <div class="col-md-12">
+                <mat-form-field class="w-100" appearance="outline">
+                  <mat-label>Title</mat-label>
+                  <textarea matInput formControlName="title" placeholder="Enter Title"></textarea>
+                  <mat-error *ngIf="
+                    ProductForm.get('title')?.invalid &&
+                    ProductForm.get('title')?.touched
+                  ">
+                    Title is required
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div class="col-md-12">
+                <mat-form-field class="w-100" appearance="outline">
+                  <mat-label>Category</mat-label>
+                  <textarea matInput formControlName="category" placeholder="Enter Category"></textarea>
+                  <mat-error *ngIf="
+                    ProductForm.get('category')?.invalid &&
+                    ProductForm.get('category')?.touched
+                  ">
+                    Category is required
+                  </mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="row mb-2">
+
+
+              <div class="col-md-12">
+                <mat-form-field class="w-100" appearance="outline">
+                  <mat-label>Comission</mat-label>
+                  <input matInput formControlName="commission" placeholder="Enter Comission"
+                    (keypress)="validateNumeric($event)" />
+                </mat-form-field>
+              </div>
+            </div>
+
+            <div class="row mb-2">
+              <div class="col-md-11">
+                <mat-form-field class="w-100" appearance="outline">
+                  <mat-label>About Item</mat-label>
+                  <textarea matInput formControlName="aboutItem" placeholder="Enter Item About" rows="3"></textarea>
+                </mat-form-field>
+              </div>
+
+              <div class="col-md-1">
+                <button mat-icon-button (click)="addAboutItem()">
+                  <mat-icon>add</mat-icon>
+                </button>
+
+                <!-- Button to open dialog -->
+                <button mat-icon-button (click)="openAboutItemDialog()">
+                  <mat-icon>info</mat-icon>
+                </button>
+              </div>
+
+            </div>
+
+            <div class="col-md-12">
+              <mat-form-field class="w-100" appearance="outline">
+                <mat-label>Product Description</mat-label>
+                <textarea matInput formControlName="productDescription"
+                  placeholder="Enter Product Description"></textarea>
+              </mat-form-field>
+            </div>
+
+            <div class="col-md-12">
+              <mat-form-field class="w-100" appearance="outline">
+                <mat-label>Technical Specification</mat-label>
+                <textarea matInput formControlName="technicalSpecification"
+                  placeholder="Enter Technical Specification About"></textarea>
+              </mat-form-field>
+            </div>
+
+            <div class="col-md-12">
+              <mat-form-field class="w-100" appearance="outline">
+                <mat-label>Keywords</mat-label>
+                <mat-chip-list #chipList aria-label="Keyword selection">
+                  <mat-chip *ngFor="let keyword of keywordsList; let i = index" [selectable]="true" [removable]="true"
+                    (removed)="removeKeyword(i)">
+                    {{ keyword }}
+                    <button matChipRemove>
+                      <mat-icon>cancel</mat-icon>
+                    </button>
+                  </mat-chip>
+
+                  <input placeholder="Enter Keywords (press Enter to add)" [formControl]="keywordInputControl"
+                    (keydown)="addKeyword($event)" matInput />
+                </mat-chip-list>
+              </mat-form-field>
+
+            </div>
+
+            <!-- Brand Content Link -->
+            <div class="col-md-12">
+              <mat-form-field class="w-100" appearance="outline">
+                <mat-label>Brand Content Links</mat-label>
+                <mat-chip-list #brandLinkList aria-label="Brand Link selection">
+                  <mat-chip *ngFor="let link of brandLinksList; let i = index" [selectable]="true" [removable]="true"
+                    (removed)="removeBrandLink(i)">
+                    {{ link }}
+                    <button matChipRemove>
+                      <mat-icon>cancel</mat-icon>
+                    </button>
+                  </mat-chip>
+                  <input placeholder="Enter Brand Content Link (press Enter to add)"
+                    [formControl]="brandLinkInputControl" (keydown)="addBrandLink($event)" matInput />
+                </mat-chip-list>
+              </mat-form-field>
+            </div>
+
+            <!-- Brand Video Links -->
+            <div class="col-md-12">
+              <mat-form-field class="w-100" appearance="outline">
+                <mat-label>Brand Video Links</mat-label>
+                <mat-chip-list #brandVideoLinkList aria-label="Brand Video Link selection">
+                  <mat-chip *ngFor="let videoLink of brandVideoLinksList; let i = index" [selectable]="true"
+                    [removable]="true" (removed)="removeBrandVideoLink(i)">
+                    {{ videoLink }}
+                    <button matChipRemove>
+                      <mat-icon>cancel</mat-icon>
+                    </button>
+                  </mat-chip>
+                  <input placeholder="Enter Brand Video Link (press Enter to add)"
+                    [formControl]="brandVideoLinkInputControl" (keydown)="addBrandVideoLink($event)" matInput />
+                </mat-chip-list>
+              </mat-form-field>
+            </div>
+
+            <!-- Competitor URL -->
+            <div>
+              <mat-form-field class="w-100" appearance="outline">
+                <mat-label>Competitor URLs</mat-label>
+                <mat-chip-list #competitorUrlList aria-label="Competitor URL selection">
+                  <mat-chip *ngFor="let url of competitorUrlsList; let i = index" [selectable]="true" [removable]="true"
+                    (removed)="removeCompetitorUrl(i)">
+                    {{ url }}
+                    <button matChipRemove>
+                      <mat-icon>cancel</mat-icon>
+                    </button>
+                  </mat-chip>
+                  <input placeholder="Enter Competitor URL (press Enter to add)"
+                    [formControl]="competitorUrlInputControl" (keydown)="addCompetitorUrl($event)" matInput />
+                </mat-chip-list>
+              </mat-form-field>
+            </div>
+          </div>
+        </mat-dialog-content>
+      </mat-tab>
+      <mat-tab [label]=" this.userInfo.roleLevel == 1 ? 'Admin Details' : 'Manager Details' "
+        *ngIf="this.userInfo.roleLevel == 1 || this.userInfo.roleLevel == 2">
+        <mat-dialog-content class="mat-typography" style="min-height: 660px;">
+          <div class="tab-content">
+            <div class="row mt-3">
+              <div class="col-md-6">
+                <mat-form-field class="w-100" appearance="outline">
+                  <mat-label>Purchase Price INR</mat-label>
+                  <input matInput (keypress)="validateNumeric($event)" type="number" formControlName="purchasePriceINR"
+                    placeholder="Enter Purchase Price INR" />
+                </mat-form-field>
+              </div>
+              <div class="col-md-6">
+                <mat-form-field class="w-100" appearance="outline">
+                  <mat-label>Purchase Price USD</mat-label>
+                  <input matInput formControlName="purchasePriceUSD" (keypress)="validateNumeric($event)" type="number"
+                    placeholder="Enter Purchase Price USD" />
+                </mat-form-field>
+              </div>
+            </div>
+            <ng-container *ngIf="this.userInfo.roleLevel == 1 ">
+              <div class="row">
+                <div class="col-md-6">
+                  <mat-form-field class="w-100" appearance="outline">
+                    <mat-label>BCD</mat-label>
+                    <input matInput formControlName="BCD" (keypress)="validateNumeric($event)" type="number"
+                      placeholder="Enter BCD" />
+                  </mat-form-field>
+                </div>
+                <div class="col-md-6">
+                  <mat-form-field class="w-100" appearance="outline">
+                    <mat-label>AIDC</mat-label>
+                    <input matInput formControlName="AIDC" (keypress)="validateNumeric($event)" type="number"
+                      placeholder="Enter AIDC" />
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <mat-form-field class="w-100" appearance="outline">
+                    <mat-label>SW Surcharge</mat-label>
+                    <input matInput formControlName="SWSurcharge" (keypress)="validateNumeric($event)" type="number"
+                      placeholder="Enter SWSurcharge" />
+                  </mat-form-field>
+                </div>
+                <div class="col-md-6">
+                  <mat-form-field class="w-100" appearance="outline">
+                    <mat-label>IGST</mat-label>
+                    <input matInput formControlName="IGST" (keypress)="validateNumeric($event)" type="number"
+                      placeholder="Enter IGST" />
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <mat-form-field class="w-100" appearance="outline">
+                    <mat-label>Duty</mat-label>
+                    <input matInput formControlName="duty" (keypress)="validateNumeric($event)" type="number"
+                      placeholder="Enter duty" />
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <mat-form-field class="w-100" appearance="outline">
+                    <mat-label>Total</mat-label>
+                    <input matInput formControlName="total" (keypress)="validateNumeric($event)" type="number"
+                      placeholder="Enter total" />
+                  </mat-form-field>
+                </div>
+                <div class="col-md-6">
+                  <mat-form-field class="w-100" appearance="outline">
+                    <mat-label>Shipping</mat-label>
+                    <input matInput formControlName="shipping" (keypress)="validateNumeric($event)" type="number"
+                      placeholder="Enter shipping" />
+                  </mat-form-field>
+                </div>
+              </div>
+
+              <div class="row mb-2">
+                <div class="col-md-11">
+                  <mat-form-field class="w-100" appearance="outline">
+                    <mat-label>Agent Details</mat-label>
+                    <textarea matInput formControlName="agentDetails" placeholder="Enter Agent Details"
+                      rows="3"></textarea>
+                  </mat-form-field>
+                </div>
+
+                <div class="col-md-1">
+                  <button mat-icon-button (click)="addAgentDetails()">
+                    <mat-icon>add</mat-icon>
+                  </button>
+
+                  <button mat-icon-button (click)="openAgentDetails()">
+                    <mat-icon>info</mat-icon>
+                  </button>
+                </div>
+
+              </div>
+
+            </ng-container>
+          </div>
+        </mat-dialog-content>
+      </mat-tab>
+
+      <mat-tab label="Attachments">
+        <div class="tab-contents">
+          <mat-dialog-content class="mat-typography" style="min-height: 660px;">
+            <mat-label style="color: black; font-style: oblique">Primary Attachments</mat-label>
+            <mat-divider class="my-2"></mat-divider>
+            <div class="row mb-2">
+
+              <div class="col-md-12" *ngIf="base64Image == null && primaryImageData == null">
+                <div class="form-group my-3">
+                  <input id="fileInput" type="file" class="form-control" (change)="onFileSelectedForImage($event)"
+                    accept=".jpg, .jpeg, .png" />
+                </div>
+              </div>
+
+              <div class="col-md-12 d-flex align-items-center my-3" *ngIf="base64Image !== null">
+                <div class="image-preview-circle">
+                  <img [src]="'data:image/png;base64,' + base64Image" class="circle-image" alt="Selected Image" />
+                </div>
+                <div class="image-info ml-2">
+                  <p class="file-name">{{ fileName }}</p>
+                  <p class="file-size m-0">{{ imageSizeConvertor(primaryImageSize) }} mb</p>
+                </div>
+                <button mat-icon-button (click)="removeImage2()">
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </div>
+              <div class="col-md-12 d-flex align-items-center my-3" *ngIf="primaryImageData != null">
+                <div class="image-preview-circle">
+                  <img [src]="basePath + primaryImageData.filePath" class="circle-image" alt="Selected Image" />
+                </div>
+                <div class="image-info ml-2">
+                  <p class="file-name">{{primaryImageData.fileName}} </p>
+                  <p class="file-size m-0">{{imageSizeConvertor(primaryImageData.fileSize)}} mb</p>
+                </div>
+                <button mat-icon-button (click)="removeImage2()">
+                  <mat-icon>cancel</mat-icon>
+                </button>
+              </div>
+
+            </div>
+
+            <div class="row mb-4">
+              <div class="col-md-6">
+                <div class="row" *ngIf="ProductForm.get('pdfLabel')?.value; else pdfLabelInputFile">
+                  <mat-label>PDF Label</mat-label>
+                  <div class="col-md-10 d-flex justify-content-center pe-0">
+                    <input matInput type="text" class="form-control"
+                      [value]="pdfLabelPdfFileName == null ? ProductForm.get('pdfLabel')?.value?.split('_')[1] : pdfLabelPdfFileName"
+                      readonly />
+                  </div>
+                  <div class="col-md-2 d-flex justify-content-start p-0">
+                    <button mat-icon-button color="warn" (click)="clearPdf('pdfLabel')">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </div>
+                </div>
+
+                <ng-template #pdfLabelInputFile>
+                  <mat-label>PDF Label</mat-label>
+                  <input type="file" accept=".pdf" class="form-control" (change)="onFileSelectedPdf($event, 'pdfLabel')"
+                    placeholder="Choose PDF File" />
+                </ng-template>
+              </div>
+              <div class="col-md-6">
+                <div class="row" *ngIf="ProductForm.get('userManualPdf')?.value; else userManualPdfInputFile">
+                  <mat-label>User Manual PDF</mat-label>
+                  <div class="col-md-10 d-flex justify-content-center pe-0">
+                    <input matInput type="text" class="form-control"
+                      [value]="userManualPdfFileName == null ? ProductForm.get('userManualPdf')?.value?.split('_')[1] : userManualPdfFileName" />
+                  </div>
+                  <div class="col-md-2 d-flex justify-content-start p-0">
+                    <button mat-icon-button color="warn" (click)="clearPdf('userManualPdf')">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  </div>
+                </div>
+
+                <ng-template #userManualPdfInputFile>
+                  <mat-label>PDF Label</mat-label>
+                  <input type="file" accept=".pdf" class="form-control"
+                    (change)="onFileSelectedPdf($event, 'userManualPdf')" placeholder="Choose PDF File" />
+                </ng-template>
+              </div>
+            </div>
+
+            <div class="row mb-2">
+              <mat-label style="color: black; font-style: oblique">Secondary Attachments</mat-label>
+              <mat-divider class="my-2"></mat-divider>
+
+
+              <!-- Button to open product gallery -->
+              <div class="col-md-6 my-3">
+                <button mat-menu-item (click)="openPopupImage()">
+                  <mat-icon>add_photo_alternate</mat-icon> Product Gallery
+                </button>
+              </div>
+            </div>
+          </mat-dialog-content>
+
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+
+
+    <mat-dialog-actions align="start" class="mx-3 my-2">
+      <button mat-raised-button color="primary" type="submit" [disabled]="ProductForm.invalid" matDialogClose
+        (click)="onSubmit()">
+        Submit
+      </button>
+    </mat-dialog-actions>
+  </form>
+
+</ng-template>
+
+
+
+<ng-template #dialogTemplateRef>
+  <div class="dialog-header">
+    <ng-container>
+      <span class="title" mat-dialog-title>About Item</span>
+    </ng-container>
+    <button class="closepopup m-2" mat-icon-button color="primary" matDialogClose matTooltip="Close form" id="clicked">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <mat-divider></mat-divider>
+  <div mat-dialog-content>
+    <ng-container *ngIf="aboutItemsList.length > 0; else noItems">
+      <ul class="about-items-list">
+        <li *ngFor="let item of aboutItemsList; let i = index" class="about-item-row">
+          <span class="item-text">{{ item }}</span>
+          <button mat-icon-button class="delete-btn" (click)="removeAboutItem(i)">
+            <mat-icon color="warn">remove</mat-icon>
+          </button>
+        </li>
+      </ul>
+    </ng-container>
+
+    <!-- No Items Found -->
+    <ng-template #noItems>
+      <p>No items found.</p>
+    </ng-template>
+  </div>
+
+</ng-template>
+
+<ng-template #agentDetailsRef>
+  <div class="dialog-header">
+    <ng-container>
+      <span class="title" mat-dialog-title>Agent Details</span>
+    </ng-container>
+    <button class="closepopup m-2" mat-icon-button color="primary" matDialogClose matTooltip="Close form" id="clicked">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <mat-divider></mat-divider>
+  <div mat-dialog-content>
+    <ng-container *ngIf="agentDetailsList.length > 0; else noItems">
+      <ul class="about-items-list">
+        <li *ngFor="let item of agentDetailsList; let i = index" class="about-item-row">
+          <span class="item-text">{{ item }}</span>
+          <button mat-icon-button class="delete-btn" (click)="removeAgentDetail(i)">
+            <mat-icon color="warn">remove</mat-icon>
+          </button>
+        </li>
+      </ul>
+    </ng-container>
+
+    <!-- No Items Found -->
+    <ng-template #noItems>
+      <p>No items found.</p>
+    </ng-template>
+  </div>
+
+</ng-template>
+
+<ng-template #openImageRef>
+  <div class="dialog-header">
+    <ng-container>
+      <button mat-menu-item (click)="fileInput.click()">
+        <mat-icon>add_photo_alternate</mat-icon>Add More
+      </button>
+      <input #fileInput type="file" multiple (change)="onFileSelectedImages($event)" accept=".jpg,.png,.jpeg,.mp4"
+        style="display:none" />
+
+    </ng-container>
+
+    <button class="closepopup m-2" mat-icon-button color="primary" matDialogClose matTooltip="Close form" id="clicked">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <mat-divider></mat-divider>
+
+  <div mat-dialog-content>
+    <div *ngIf="ImageList.length > 0">
+      <h4>Selected Files:</h4>
+      <div class="image-preview-container">
+        <div *ngFor="let file of ImageList; let i = index" class="image-item">
+          <div class="image-preview-wrapper">
+
+            <div class="card card-addimage shadow-sm" *ngIf="file.id > 0">
+              <div class="card-content">
+                <div class="image-container">
+                  <img [src]="basePath + file?.filePath" alt="Uploaded File" class="image-preview">
+                </div>
+                <div class="image-info add-moreImage ml-2">
+                  <p class="file-nameWrap">{{ file?.fileName }}</p>
+                  <p class="file-size m-0">{{ imageSizeConvertor(file?.fileSize) }} mb</p>
+                </div>
+              </div>
+            </div>
+            <div class="card card-addimage shadow-sm" *ngIf="file.id == 0">
+              <div class="card-content">
+                <div class="image-container">
+                  <img *ngIf="file.id == 0" [src]="file?.filePath" alt="Uploaded File" class="image-preview">
+                </div>
+                <div class="image-info add-moreImage ml-2">
+                  <p class="file-nameWrap">{{ file?.fileName }}</p>
+                  <p class="file-size m-0">{{ imageSizeConvertor(file?.fileSize) }} mb</p>
+                </div>
+              </div>
+            </div>
+
+            <button mat-icon-button class="delete-btn remove-icon" (click)="removeImage(i)">
+              <mat-icon color="warn">cancel</mat-icon>
+            </button>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <p *ngIf="ImageList.length === 0">No images/videos added yet.</p>
+  </div>
+
+  <mat-divider></mat-divider>
+  <div mat-dialog-actions align="end">
+    <button mat-raised-button color="primary" mat-dialog-close (click)="saveImageList()"
+      [disabled]="ImageList.length === 0">
+      Save
+    </button>
+  </div>
+
+</ng-template>

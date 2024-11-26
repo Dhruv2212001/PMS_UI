@@ -1,0 +1,68 @@
+<div style="height: calc(100vh - 64px)" class="overflow-hidden">
+  <div class="container">
+    <div class="profile-card">
+        <div class="profile-header">
+            <div class="profile-img">
+                <img src="https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg" alt="Profile Picture">
+            </div>
+            <h2>{{UserData?.name}}</h2>
+            <p class="profession">{{UserData?.role}}</p>
+        </div>
+
+        <div class="tab-content">
+            <div id="about" class="tab active">
+                <h3>Profile Information</h3>
+                <div class="info-item">
+                  <label>User Name:</label>
+                  <p>{{UserData.userName}}</p>
+              </div>
+              <div class="info-item">
+                <label>Email:</label>
+                <p>{{UserData.email}}</p>
+            </div>
+            <div class="info-item">
+              <label>Phone Number:</label>
+              <p>{{UserData.phoneNumber}}</p>
+          </div>
+              <div class="info-item">
+                  <label>Address 1:</label>
+                  <p>{{UserData.address1}}</p>
+              </div>
+              <div class="info-item">
+                  <label>Address 2:</label>
+                  <p>{{UserData.address2}}</p>
+              </div>
+              <div class="info-item">
+                  <label>City:</label>
+                  <p>{{UserData.city}}</p>
+              </div>
+              <div class="info-item">
+                  <label>Postcode:</label>
+                  <p>{{UserData.postcode}}</p>
+              </div>
+              <div class="info-item">
+                  <label>State:</label>
+                  <p>{{UserData.state}}</p>
+              </div>
+
+            </div>
+            <div id="projects" class="tab">
+                <h3>Projects</h3>
+                <button class="collapsible">Project 1</button>
+                <div class="content">
+                    <p>Description of Project 1.</p>
+                </div>
+                <button class="collapsible">Project 2</button>
+                <div class="content">
+                    <p>Description of Project 2.</p>
+                </div>
+            </div>
+            <div id="skills" class="tab">
+                <h3>Skills</h3>
+                <p>Web Development, UI/UX Design, JavaScript, PHP</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>

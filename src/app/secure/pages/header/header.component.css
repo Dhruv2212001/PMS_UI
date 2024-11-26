@@ -1,0 +1,18 @@
+ .example-spacer {
+    flex: 1 1 auto;
+  }
+
+  mat-drawer{
+    z-index: 1 !important;
+  }
+  .mat-icon-size {
+    position: absolute;
+    font-size: 37px;
+    height: 50px;
+    width: 50px;
+    top: 5px;
+    right: 0%;
+  }
+.list-item mat-list-item{
+  font-family: 'Poppins', sans-serif;
+}

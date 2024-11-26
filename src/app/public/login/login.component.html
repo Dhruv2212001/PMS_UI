@@ -1,0 +1,35 @@
+<ngx-spinner
+  bdColor = "rgba(0, 0, 0, 0.5)"
+  size="medium"
+  color="#fff"
+  loadingText="Loading..."
+  type="ball-scale-multiple">
+</ngx-spinner>
+<ng-toast [width]="300" />
+<div class="container-fluid">
+  <mat-card class="card" *ngIf="hasToken">
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <mat-icon class="mb-1 lock icon-large">account_circle</mat-icon>
+      <h2 style="color: #2b3a8d; font-size: x-large; margin-bottom: 23px;">Login</h2>
+      <mat-form-field class="full-width" appearance="outline">
+        <mat-label>Email</mat-label>
+        <mat-icon matSuffix>email</mat-icon>
+        <input matInput formControlName="email" type="email">
+        <mat-error *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+          Email is required.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="full-width" appearance="outline">
+        <mat-label>Password</mat-label>
+        <input matInput placeholder="Password" [type]="hide ? 'password' : 'text'" formControlName="password" required>
+        <mat-icon matSuffix (click)="hide = !hide">{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+        <mat-error *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+          Password is required.
+        </mat-error>
+      </mat-form-field>
+
+      <button class="full-width" mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid">Login</button>
+    </form>
+  </mat-card>
+</div>

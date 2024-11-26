@@ -1,0 +1,64 @@
+
+<ngx-spinner
+  bdColor = "rgba(0, 0, 0, 0.5)"
+  size="medium"
+  color="#fff"
+  loadingText="Loading..."
+  type="ball-scale-multiple">
+</ngx-spinner>
+<mat-toolbar color="primary" class="mat-elevation-z8">
+  <button (click)="drawer.toggle()" mat-icon-button>
+      <mat-icon>menu</mat-icon>
+  </button>
+  <span>{{userData.role}} Dashboard</span>
+  <span class="example-spacer"></span>
+
+
+  <span class="fill-remaining-space">
+    <button mat-icon-button [matMenuTriggerFor]="menu"
+      #menuTrigger="matMenuTrigger"
+      (mouseover)="menuTrigger.openMenu()">
+      <mat-icon class="mat-icon-size">account_circle</mat-icon>
+    </button>
+    <mat-menu #menu="matMenu" [overlapTrigger]="false">
+      <span (mouseleave)="menuTrigger.closeMenu()">
+        <button mat-menu-item routerLink="/changepassword" >
+          <mat-icon>vpn_key</mat-icon>
+          <span class="font">Change Password</span>
+        </button>
+        <button mat-menu-item (click)="logOut()">
+          <mat-icon>exit_to_app</mat-icon>
+          <span class="font">Logout</span>
+        </button>
+      </span>
+    </mat-menu>
+
+  </span>
+
+
+
+</mat-toolbar>
+<mat-drawer-container autosize>
+  <mat-drawer #drawer opened="true" mode="side" position="start">
+  <mat-nav-list class="list-item">
+      <mat-list-item class="d-flex justify-content-center" routerLink="/dashboard">
+        <div class="d-flex align-items-center gap-2" ><mat-icon>dashboard</mat-icon><a class="text-black text-decoration-none"  > Dashboard</a></div>
+      </mat-list-item>
+      <mat-list-item class="d-flex justify-content-center" *ngIf="this.userData.role == 'Admin'"  routerLink="/adduser">
+        <div class="d-flex align-items-center gap-2"><mat-icon>group_add</mat-icon><a class="text-black text-decoration-none"  > System User</a></div>
+      </mat-list-item>
+      <mat-list-item class="d-flex justify-content-center" *ngIf="this.userData.role == 'Admin'" routerLink="/systemrole">
+        <div class="d-flex align-items-center gap-2" ><mat-icon>supervisor_account</mat-icon><a class="text-black text-decoration-none"  > System Role</a></div>
+      </mat-list-item>
+      <mat-list-item class="d-flex justify-content-center" routerLink="/userprofile">
+        <div class="d-flex align-items-center gap-2" ><mat-icon>account_circle</mat-icon><a class="text-black text-decoration-none"  > User Profile</a></div>
+      </mat-list-item>
+
+  </mat-nav-list>
+  </mat-drawer>
+  <mat-drawer-content>
+      <div style="text-align: center;">
+        <router-outlet></router-outlet>
+      </div>
+  </mat-drawer-content>
+</mat-drawer-container>

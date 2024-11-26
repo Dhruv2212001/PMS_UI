@@ -1,0 +1,260 @@
+<div style="height: calc(100vh - 64px) ;">
+  <div class="container-new mt-4 p-0 ">
+    <mat-card>
+      <div>
+        <div class="header">
+          <div class="px-3 pt-3">
+            <h2>Add </h2>
+          </div>
+          <div style="display: flex; align-items: center" class="px-3">
+            <div class="pt-4 px-3">
+              <mat-form-field class="example-full-width" appearance="outline">
+                <mat-label>Search</mat-label>
+                <input (keyup)="applyFilter($event)" matInput />
+                <mat-icon matSuffix>search</mat-icon>
+              </mat-form-field>
+            </div>
+            <button mat-icon-button class="me-3" (click)="getUser()" matTooltip="Click to Refresh">
+              <mat-icon>refresh</mat-icon>
+            </button>
+
+            <button class="buttons px-3" mat-raised-button color="primary" (click)="openpopup(addUserForm)"
+              matTooltip="Click to User Add">
+              Add(+)
+            </button>
+          </div>
+        </div>
+      </div>
+    </mat-card>
+    <div class="mat-elevation-z8 mt-4">
+      <table mat-table [dataSource]="dataSource">
+
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef> Email </th>
+          <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="userName">
+          <th mat-header-cell *matHeaderCellDef> User Name </th>
+          <td mat-cell *matCellDef="let element"> {{element.userName}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef> Name </th>
+          <td mat-cell *matCellDef="let element"> {{element.name || 'N/A'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="phoneNumber">
+          <th mat-header-cell *matHeaderCellDef> Phone Number </th>
+          <td mat-cell *matCellDef="let element"> {{element.phoneNumber || 'N/A'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="address1">
+          <th mat-header-cell *matHeaderCellDef> Address 1 </th>
+          <td mat-cell *matCellDef="let element"> {{element.address1 || 'N/A'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="address2">
+          <th mat-header-cell *matHeaderCellDef> Address 2 </th>
+          <td mat-cell *matCellDef="let element"> {{element.address2 || 'N/A'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="city">
+          <th mat-header-cell *matHeaderCellDef> City </th>
+          <td mat-cell *matCellDef="let element"> {{element.city || 'N/A'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="state">
+          <th mat-header-cell *matHeaderCellDef> State </th>
+          <td mat-cell *matCellDef="let element"> {{element.state || 'N/A'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="postcode">
+          <th mat-header-cell *matHeaderCellDef> Postcode </th>
+          <td mat-cell *matCellDef="let element"> {{element.postcode || 'N/A'}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="role">
+          <th mat-header-cell *matHeaderCellDef> Role </th>
+          <td mat-cell *matCellDef="let element"> {{element.role}} </td>
+        </ng-container>
+
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef class="fixed-width"> Action </th>
+          <td mat-cell *matCellDef="let element" class="fixed-width">
+            <button mat-icon-button (click)="editElement(addUserForm, element)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button (click)="deleteRole(element)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <div *ngIf="dataSource.filteredData.length === 0" class="no-data-message">
+        No data available
+      </div>
+      <mat-paginator [pageSizeOptions]="[5,10,15]" showFirstLastButtons></mat-paginator>
+    </div>
+
+  </div>
+</div>
+
+<ng-template #addUserForm>
+  <div class="dialog-header">
+    <ng-container>
+      <span class="title" mat-dialog-title>Add Users</span>
+    </ng-container>
+    <button class="closepopup m-2" (click)="closepopup()" mat-icon-button color="primary" matDialogClose
+      matTooltip="Close form" id="clicked">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <mat-divider></mat-divider>
+  <form [formGroup]="UserForm" (ngSubmit)="onSubmit()" style="padding: 15px;">
+    <mat-dialog-content class="mat-typography">
+      <div class="row mb-2">
+        <div [ngClass]="userId === 0 ? 'col-md-6' : 'col-md-12' ">
+          <mat-form-field class="w-100" appearance="outline">
+            <mat-label>User Name</mat-label>
+            <input matInput formControlName="username" placeholder="Enter UserName">
+            <mat-error *ngIf="UserForm.get('username')?.invalid && UserForm.get('username')?.touched">
+              Username is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="col-md-6" *ngIf="userId === 0">
+          <mat-form-field class="w-100" appearance="outline">
+            <mat-label>Password</mat-label>
+            <input matInput formControlName="password" placeholder="Enter Password">
+            <mat-error *ngIf="UserForm.get('password')?.invalid && UserForm.get('password')?.touched">
+              Password is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="row mb-2">
+        <div class="col-md-6">
+          <mat-form-field class="w-100" appearance="outline">
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="name" placeholder="Enter Name">
+            <mat-error *ngIf="UserForm.get('name')?.invalid && UserForm.get('name')?.touched">
+              Name is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="col-md-6">
+          <mat-form-field class="w-100" appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" placeholder="Enter Email">
+            <mat-error *ngIf="UserForm.get('email')?.invalid && UserForm.get('email')?.touched">
+              Email is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="row mb-2">
+      <div class="col-md-6">
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-label>Phone</mat-label>
+          <input matInput formControlName="phoneNumber" placeholder="Enter Phone Number">
+          <mat-error *ngIf="UserForm.get('phoneNumber')?.invalid && UserForm.get('phoneNumber')?.touched">
+            Phone is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="col-md-6">
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-label>Address1</mat-label>
+          <input matInput formControlName="address1" placeholder="Enter Address">
+          <mat-error *ngIf="UserForm.get('address1')?.invalid && UserForm.get('address1')?.touched">
+            Address1 is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="row mb-2">
+      <div class="col-md-6">
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-label>City</mat-label>
+          <input matInput formControlName="city" placeholder="Enter City">
+          <mat-error *ngIf="UserForm.get('city')?.invalid && UserForm.get('city')?.touched">
+            City is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="col-md-6">
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-label>Address2</mat-label>
+          <input matInput formControlName="address2" placeholder="Enter Address">
+          <mat-error *ngIf="UserForm.get('address2')?.invalid && UserForm.get('address2')?.touched">
+            Address2 is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="row mb-2">
+      <div class="col-md-6">
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-label>Sate</mat-label>
+          <input matInput formControlName="state" placeholder="Enter State">
+          <mat-error *ngIf="UserForm.get('state')?.invalid && UserForm.get('state')?.touched">
+            State is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="col-md-6">
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-label>Postcode</mat-label>
+          <input matInput formControlName="postcode" placeholder="Enter Postcode">
+          <mat-error *ngIf="UserForm.get('postcode')?.invalid && UserForm.get('postcode')?.touched">
+            Postalcode is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+      <div class="row mb-2">
+        <div class="col-md-6">
+          <mat-form-field class="w-100" appearance="outline">
+            <mat-label>User Type</mat-label>
+            <mat-select formControlName="roleLevel">
+              <mat-option *ngFor="let role of roles" [value]="role.value">
+                {{role.viewValue}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <mat-label style="color: black; font-style: oblique">User Role</mat-label>
+      <mat-divider class="my-2"></mat-divider>
+
+      <div class="row my-3">
+        <div class="col-md-6">
+          <mat-radio-group [formControl]="roleControl" class="d-flex">
+            <mat-radio-button *ngFor="let role of userRole" [value]="role.name" style="margin-right: 15px;">
+              {{ role.name }}
+            </mat-radio-button>
+          </mat-radio-group>
+        </div>
+      </div>
+
+    </mat-dialog-content>
+    <mat-dialog-actions align="start" class="mx-3 my-2">
+      <button mat-raised-button color="primary" mat-dialog-close type="submit"
+        [disabled]="UserForm.invalid">Submit</button>
+    </mat-dialog-actions>
+  </form>
+</ng-template>

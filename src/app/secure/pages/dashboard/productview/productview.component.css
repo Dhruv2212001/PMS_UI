@@ -1,0 +1,441 @@
+.product-details-page {
+  background-color: #f9f9f9;
+}
+
+.product-title {
+  color: #2c3e50;
+  font-size: 35px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+}
+
+.card {
+  transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+h2.card-title {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.carousel-inner img {
+  border-radius: 10px;
+  max-width: 200px;
+  max-height: 200px;
+}
+
+a.text-primary:hover {
+  text-decoration: underline;
+}
+
+.text-danger {
+  color: #e74c3c;
+}
+
+
+.heading{
+  font-size: medium;
+  padding: 2%;
+  display: flex;
+  text-align: left;
+  align-items:center
+}
+
+.basic-details{
+  font-size: small;
+  font-style: bold;
+  padding: 2%;
+  text-align: left;
+}
+
+.Content{
+  padding: 1%;
+}
+
+.table tr th{
+  border-bottom: none;
+  color: #3f51b5;
+  vertical-align: baseline;
+}
+
+.table tr td{
+  border-bottom: none;
+}
+
+img{
+  width: 100%;
+  display: block;
+}
+
+.img-display {
+  width: 100%;
+  max-width: 600px;
+  height: 600px;
+  margin: auto;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  background-color: #f9f9f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.img-showcase {
+  display: flex;
+  transition: all 0.5s ease;
+  width: 100%;
+  height: 100%;
+}
+
+.img-showcase img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.img-select {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+
+.img-item {
+  width: 80px;
+  height: 80px;
+  cursor: pointer;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s, opacity 0.3s;
+}
+
+.img-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.img-item:hover {
+  opacity: 0.85;
+  transform: scale(1.1);
+}
+
+.img-display, .img-showcase img, .img-item {
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+.img-item:nth-child(1),
+.img-item:nth-child(2),
+.img-item:nth-child(3) {
+  margin-right: 0;
+}
+
+
+.product-details-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.product-details-table th{
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  width: 13%;
+  vertical-align: middle;
+}
+
+.product-details-table td {
+  text-align: left;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  width: 50%;
+  vertical-align: middle;
+}
+
+.product-details-table th {
+  font-weight: bold;
+}
+
+.text-danger {
+  margin: 0;
+  padding: 10px;
+}
+
+.box-scroll::-webkit-scrollbar {
+  display: none;
+}
+.chip-spacing {
+  margin: 0 8px 8px 0;
+  padding: 22px 0;  max-width: fit-content !important;
+  white-space: normal;
+   word-wrap: break-word;
+}
+
+.bullet-list-item {
+  list-style-type: disc;
+}
+
+.tooltip-content {
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  margin-top: 5px;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+
+}
+.chip-list-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.custom-chip {
+  display: flex;
+  align-items: flex-start;
+  text-align: start;
+  background-color: #f1f1f1;
+  border-radius: 16px;
+  padding: 10px 12px;
+  width: 100%;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  gap: 15px;
+}
+
+.nested-table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-left: 25px;
+}
+
+.nested-table td {
+  padding: 5px;
+  text-align: left;
+}
+
+.nested-td{
+padding: 1px !important;
+}
+
+.nested-table tr:first-child td {
+  background-color: #f9f9f9;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  user-select: none;
+  cursor: default;
+}
+
+.chip-content {
+  flex-grow: 1;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
+  user-select: none;
+}
+
+.note-text {
+  margin: 0;
+  font-size: 13px;
+  color: #333;
+  font-family: sans-serif;
+}
+
+.chip-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.chip-icon {
+  padding: 4px;
+  border-radius: 50%;
+  color: #6c757d;
+}
+
+.chip-icon:hover {
+  background-color: #e2e6ea;
+  color: #495057;
+}
+
+.specification-table{
+  width: 80%;
+  border-collapse: collapse;
+}
+
+/* Table styling */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  font-family: 'Arial', sans-serif;
+}
+
+.table th {
+  background-color: #fbfbfb;
+  color: #fff;
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 14px;
+  border-bottom: 2px solid #2980b9;
+}
+
+/* Table body */
+.table td {
+  padding: 12px 15px;
+  font-size: 14px;
+  color: #2c3e50;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+
+.table tr:nth-child(even) {
+  background-color: #f4f6f8;
+}
+
+
+.table tr:hover {
+  background-color: #ecf0f1;
+}
+
+/* Styling for empty value (N/A) */
+.table td:empty {
+  color: #e74c3c;
+  font-style: italic;
+}
+
+/* Message when there's no permission */
+.text-danger {
+  color: #e74c3c;
+  text-align: center;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 20px;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+}
+
+.table td, .table th, .table tr, .table ,.Content{
+  cursor: default;
+}
+
+/* Main container */
+.content {
+  padding: 20px;
+  max-width: 100%;
+  overflow-x: auto;
+  cursor: default;
+}
+
+/* Heading styling */
+.heading {
+  font-size: 24px;
+  font-weight: bold;
+  color: #2c3e50;
+  padding-bottom: 0;
+  user-select: none;
+  cursor: default;
+}
+
+/* Outer table styling */
+.specification {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background-color: #fff;
+  font-family: 'Arial', sans-serif;
+  overflow: hidden;
+}
+
+/* Category row (header) */
+.specification th {
+  background-color: #ffffff;
+  color: #fff;
+  padding: 12px 15px;
+  font-weight: 600;
+  text-align: left;
+  font-size: 16px;
+  border-bottom: 2px solid #1f6399;
+
+}
+
+/* Main property-value row */
+.specification td {
+  padding: 12px;
+  color: #2c3e50;
+  font-size: 14px;
+  background-color: #f9f9f9;
+
+}
+
+/* Nested table styling */
+.nested-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #f4f6f8;
+}
+
+.nested-table td {
+  padding: 8px;
+  color: #2c3e50;
+}
+
+/* Last row in nested table */
+.nested-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Row hover effect */
+.specification tr:hover {
+  background-color: #ecf0f1;
+}
+
+
+/* List item styling */
+.content div {
+  padding: 8px 0;
+  font-size: 16px;
+  color: #34495e;
+  line-height: 1.6;
+  display: flex;
+  align-items: center;
+}
+
+
+/* No data message */
+.content p {
+  color: #e74c3c;
+  font-style: italic;
+  font-weight: bold;
+  text-align: center;
+  background-color: #f8d7da;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 10px 0 0;
+}

@@ -1,0 +1,38 @@
+.container-fluid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  background-color: #E5F3FB;
+}
+
+
+.card {
+  padding: 2rem;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 10px;
+}
+mat-icon{
+  color:  #2e2eac;
+}
+.icon-large {
+  font-size: 42px;
+  height: 40px;
+  width: 46px;
+  position: relative;
+  left: 4px;
+  top: -2px;
+}
+

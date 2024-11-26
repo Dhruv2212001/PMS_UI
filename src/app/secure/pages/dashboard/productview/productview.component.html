@@ -1,0 +1,404 @@
+<div class="container-fluid product-details-page mt-4" style="height: calc(100vh - 90px);">
+  <div class="col-12 d-flex justify-content-evenly">
+    <div class="col-4 mt-3 pt-4">
+      <div class="col-12">
+        <div class="product-imgs">
+          <div class="img-display">
+            <div class="img-showcase">
+              <ng-container *ngIf="isImage(selectedImage); else noImageTemplate">
+                <img [src]="basePath + selectedImage" alt="Product Image" />
+              </ng-container>
+              <ng-template #noImageTemplate>
+                <img src="../../../../assets/dummyProductImage.png" class="card-img">
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="width: 535px; text-align:center;margin:4px; padding:4px;" *ngIf="images.length > 0">
+        <ng-image-slider #nav [images]="images" [infinite]="false" [autoSlide]="1" [animationSpeed]="0.5"
+          [imageSize]="{width: 100, height: 100}" [manageImageRatio]="true" [slideImage]="3"></ng-image-slider>
+      </div>
+    </div>
+    <div class="col-7 ">
+      <div class="col-12 box-scroll" style="overflow-y: scroll;max-height: 87vh;">
+        <ng-container *ngIf="isProductBasicViewable">
+          <div class="heading d-none"><b>Basic Details</b></div>
+          <!-- Basic Details Section -->
+          <div class="content">
+            <table class="table product-details-table">
+              <tbody>
+                <tr>
+                  <th>Product Name</th>
+                  <td>{{ ProductViewDetails?.basicDetails?.productName || "N/A" }}</td>
+                </tr>
+                <tr>
+                  <th>SKU</th>
+                  <td>{{ ProductViewDetails?.basicDetails?.sku || "N/A" }}</td>
+                </tr>
+                <tr>
+                  <th>HSN</th>
+                  <td>{{ ProductViewDetails?.basicDetails?.hsn || "N/A" }}</td>
+                </tr>
+                <tr>
+                  <th>GST</th>
+                  <td>{{ ProductViewDetails?.basicDetails?.gst || "N/A" }}%</td>
+                </tr>
+                <tr>
+                  <th>Selling Price</th>
+                  <td>INR {{ ProductViewDetails?.basicDetails?.sellingPrice || "N/A" }}
+                  </td>
+                </tr>
+                <tr>
+                  <th>Imports MRP</th>
+                  <td>INR {{ ProductViewDetails?.basicDetails?.importsMRP || "N/A" }} ( Inclusive of All Taxes)</td>
+                </tr>
+
+                <tr>
+                  <th>Stock</th>
+                  <td>{{ ProductViewDetails?.basicDetails?.stock || "N/A" }}</td>
+                </tr>
+                <tr>
+                  <th>Master Cartoon Quentity</th>
+                  <td>{{ ProductViewDetails?.basicDetails?.masterCartoonQuantity || "N/A" }} Unit</td>
+                </tr>
+              </tbody>
+            </table>
+
+          </div>
+          <mat-divider></mat-divider>
+          <div class="heading"><b>Dimensions</b></div>
+          <div class="content">
+            <table class="table product-details-table">
+              <tbody>
+                <tr>
+                  <th class="w-25"> Package Dimension</th>
+                  <td class="w-25">{{ formatDimension(ProductViewDetails?.basicDetails?.packageDimension) || "N/A" }}
+                  </td>
+
+                  <th class="w-25"> Package Weight</th>
+                  <td class="w-25">{{ formatDimension(ProductViewDetails?.basicDetails?.packageWeight) || "N/A" }}</td>
+                </tr>
+                <tr>
+                  <th class="w-25"> Product Dimension</th>
+                  <td class="w-25">{{ formatDimension(ProductViewDetails?.basicDetails?.productDimension) || "N/A" }}
+                  </td>
+
+                  <th class="w-25"> Product Weight</th>
+                  <td class="w-25">{{ formatDimension(ProductViewDetails?.basicDetails?.productWeight) || "N/A" }}</td>
+                </tr>
+                <tr>
+                  <th class="w-25"> Master Cartoon Dimension</th>
+                  <td class="w-25">{{ formatDimension(ProductViewDetails?.basicDetails?.masterCartoonDimension) || "N/A"
+                    }}</td>
+
+                  <th class="w-25"> Master Cartoon Weight</th>
+                  <td class="w-25">{{ formatDimension(ProductViewDetails?.basicDetails?.masterCartoonWeight) || "N/A" }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="isProductJungleViewable">
+          <mat-divider></mat-divider>
+          <div class="heading"><b>Jungle Details</b></div>
+          <div class="content">
+            <table class="table product-details-table">
+              <tbody>
+                <tr>
+                  <th> Title</th>
+                  <td>{{ ProductViewDetails?.jungleDetails?.title || "N/A" }}</td>
+                </tr>
+                <tr>
+                  <th> Category</th>
+                  <td>{{ ProductViewDetails?.jungleDetails?.category || "N/A" }}</td>
+                </tr>
+                <tr>
+                  <th> Commission</th>
+                  <td>{{ ProductViewDetails?.jungleDetails?.commission || "N/A" }}%</td>
+                </tr>
+                <tr>
+                  <th>Keywords</th>
+                  <td>
+                    <mat-chip-list *ngIf="ProductViewDetails?.jungleDetails?.keywords?.length; else noKeywords">
+                      <mat-chip *ngFor="let keyword of ProductViewDetails.jungleDetails.keywords" class="chip-spacing">
+                        {{ keyword }}
+                      </mat-chip>
+                    </mat-chip-list>
+                    <ng-template #noKeywords>
+                      N/A
+                    </ng-template>
+                  </td>
+                </tr>
+
+
+                <tr>
+                  <th> Product Description</th>
+                  <td>{{ ProductViewDetails?.jungleDetails?.productDescription || "N/A" }}</td>
+                </tr>
+
+
+                <tr>
+                  <th>Brand Content Link</th>
+                  <td>
+                    <ng-container *ngIf="ProductViewDetails?.jungleDetails?.brandContentLink?.length; else noLink">
+                      <ul>
+                        <li *ngFor="let link of ProductViewDetails.jungleDetails.brandContentLink">
+                          <a [href]="link" target="_blank" rel="noopener noreferrer">{{ link }}</a>
+                        </li>
+                      </ul>
+                    </ng-container>
+                    <ng-template #noLink>
+                      N/A
+                    </ng-template>
+                  </td>
+                </tr>
+
+                <tr>
+                  <th>Brand Video Link</th>
+                  <td>
+                    <ng-container *ngIf="ProductViewDetails?.jungleDetails?.brandVideoLinks?.length; else noLink">
+                      <ul>
+                        <li *ngFor="let link of ProductViewDetails.jungleDetails.brandVideoLinks">
+                          <a [href]="link" target="_blank" rel="noopener noreferrer">{{ link }}</a>
+                        </li>
+                      </ul>
+                    </ng-container>
+                    <ng-template #noLink>
+                      N/A
+                    </ng-template>
+                  </td>
+                </tr>
+
+                <tr>
+                  <th>CompetitorUrl</th>
+                  <td>
+                    <ng-container *ngIf="ProductViewDetails?.jungleDetails?.competitorUrl?.length; else noLink">
+                      <ul>
+                        <li *ngFor="let link of ProductViewDetails.jungleDetails.competitorUrl">
+                          <a [href]="link" target="_blank" rel="noopener noreferrer">{{ link }}</a>
+                        </li>
+                      </ul>
+                    </ng-container>
+                    <ng-template #noLink>
+                      N/A
+                    </ng-template>
+                  </td>
+                </tr>
+
+                <tr>
+                  <th>About Item</th>
+                  <td>
+                    <ng-container
+                      *ngIf="isProductJungleViewable && ProductViewDetails?.jungleDetails?.aboutItem?.length; else noAboutItem">
+                      <div class="p-0" *ngFor="let item of ProductViewDetails.jungleDetails.aboutItem"
+                        style="text-align: left; font-size: 14px">
+                        • {{ item }}
+                      </div>
+                    </ng-container>
+                    <ng-template #noAboutItem>
+                      <p>No Data to show</p>
+                    </ng-template>
+                  </td>
+                </tr>
+
+                <tr *ngIf="!isProductJungleViewable">
+                  <td colspan="2">
+                    <p class="text-danger">No Permission To View Jungle Details</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <mat-divider></mat-divider>
+          <div class="heading"><b>Specification</b></div>
+          <div class="content">
+            <table class="table product-details-table specification">
+              <tbody>
+                <ng-container *ngFor="let item of flatData; let i = index">
+                  <tr *ngIf="i === 0 || item.category !== flatData[i - 1].category">
+                    <th colspan="2">{{ item.category }}</th>
+                  </tr>
+                  <tr>
+                    <td class="nested-td">
+                      <table class="nested-table">
+                        <tr>
+                          <td>{{ item.property }}</td>
+
+                          <td>{{ item.value }}</td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="(this.userInfo.roleLevel == 1 || this.userInfo.roleLevel == 2) && this.isPurchaseOrder">
+          <mat-divider></mat-divider>
+          <div class="heading"><b>{{this.userInfo.roleLevel == 1 ? 'Admin Details' : 'Manager Details'}}</b></div>
+          <div class="content">
+            <table class="table product-details-table">
+              <tbody>
+                <tr>
+                  <th> Purchase price (INR)</th>
+                  <td>{{ ProductViewDetails?.purchaseOrders?.purchasePriceINR || "N/A" }}</td>
+                </tr>
+                <tr>
+                  <th> Purchase price (USD)</th>
+                  <td>{{ ProductViewDetails?.purchaseOrders?.purchasePriceUSD || "N/A" }}</td>
+                </tr>
+                <ng-container *ngIf="this.userInfo.roleLevel == 1 ">
+                  <tr>
+                    <th> Duty </th>
+                    <td>{{ ProductViewDetails?.purchaseOrders?.duty || "N/A" }}</td>
+                  </tr>
+                  <tr>
+                    <th> AIDC</th>
+                    <td>{{ ProductViewDetails?.purchaseOrders?.aidc || "N/A" }}</td>
+                  </tr>
+                  <tr>
+                    <th> BCD</th>
+                    <td>{{ ProductViewDetails?.purchaseOrders?.bcd || "N/A" }}</td>
+                  </tr>
+                  <tr>
+                    <th> IGST</th>
+                    <td>{{ ProductViewDetails?.purchaseOrders?.igst || "N/A" }}</td>
+                  </tr>
+                  <tr>
+                    <th> SW Surcharge</th>
+                    <td>{{ ProductViewDetails?.purchaseOrders?.swSurcharge || "N/A" }}</td>
+                  </tr>
+                  <tr>
+                    <th> Total </th>
+                    <td>{{ ProductViewDetails?.purchaseOrders?.total || "N/A" }}</td>
+                  </tr>
+                  <tr>
+                    <th> Agent Details </th>
+                    <td>
+                      <div *ngFor="let item of ProductViewDetails?.purchaseOrders?.agentDetails"
+                        style="text-align: left;">
+                        • {{ item }}
+                      </div>
+                    </td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
+        </ng-container>
+        <mat-divider></mat-divider>
+        <div class="heading"><b>Private Note Box</b>
+          <button mat-icon-button matTooltip="Click to add a note" (click)="openAboutItemDialog()">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+        <div class="content">
+          <div class="chip-list-wrapper">
+            <div *ngFor="let note of privateNotes" class="custom-chip">
+              <!-- Avatar -->
+              <div class="ms-2">
+
+                <img src="https://icon-library.com/images/anonymous-icon/anonymous-icon-0.jpg" alt="User Avatar"
+                  class="avatar" />
+              </div>
+
+              <div class="chip-content">
+                <span class="note-text">{{ note.noteContent }}</span>
+              </div>
+
+
+              <div class="chip-actions">
+                <button mat-icon-button (click)="editNote(note)" class="chip-icon" aria-label="Edit note">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button (click)="deleteNote(note)" class="chip-icon" aria-label="Delete note">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ng-container
+          *ngIf="this.ProductViewDetails?.basicDetails?.userManualPdf || this.ProductViewDetails?.basicDetails?.pdfLabel">
+
+          <mat-divider></mat-divider>
+          <div class="heading mb-3">
+            <b>Downloadable Items</b>
+          </div>
+
+          <div class="download-container">
+            <div class="row d-flex justify-content-start m-2">
+              <div class=" text-center m-3 justify-content-start d-flex">
+
+                <div *ngIf="this.ProductViewDetails?.basicDetails?.userManualPdf">
+                  <button mat-raised-button color="primary" class="custom-button" (click)="downloadUserManual()">
+                    <mat-icon class="custom-icon">description</mat-icon>
+                    <span>User Manual</span>
+                  </button>
+                </div>
+
+                <div *ngIf="this.ProductViewDetails?.basicDetails?.pdfLabel" class="ms-4">
+                  <button mat-raised-button color="primary" class="custom-button" (click)="downloadPdfLabel()">
+                    <mat-icon class="custom-icon">download</mat-icon>
+                    <span>PDF Label</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <!-- Competitor URLs Section -->
+  <mat-card class="mt-4 shadow-sm" *ngIf="ProductViewDetails?.jungleDetails?.competitorUrls?.length">
+    <mat-card-title class="text-center">Competitor URLs</mat-card-title>
+    <mat-list>
+      <mat-list-item *ngFor="let url of ProductViewDetails?.jungleDetails?.competitorUrls">
+        <a href="{{ url }}" target="_blank" class="text-primary">{{ url }}</a>
+      </mat-list-item>
+    </mat-list>
+  </mat-card>
+</div>
+
+<ng-template #dialogTemplateRef>
+  <div class="dialog-header">
+    <ng-container>
+      <span class="title" mat-dialog-title>{{noteId == 0 ? "Add" : "Edit"}} Note</span>
+    </ng-container>
+    <button class="closepopup m-2" mat-icon-button (click)="closepopup()" color="primary" matDialogClose
+      matTooltip="Close form" id="clicked">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+  <mat-divider></mat-divider>
+  <form [formGroup]="noteForm" (ngSubmit)="noteSubmit()" style="padding: 15px">
+    <mat-dialog-content class="mat-typography">
+      <div class="row mb-2">
+        <div class="col-md-12">
+          <mat-form-field class="w-100" appearance="outline">
+            <mat-label>Note</mat-label>
+            <textarea matInput formControlName="note" placeholder="Enter Note" rows="8"></textarea>
+            <mat-error *ngIf="
+                    noteForm.get('note')?.invalid &&
+                    noteForm.get('note')?.touched
+                  ">
+              Username is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+
+    </mat-dialog-content>
+    <mat-dialog-actions align="start" class="mx-3 my-2">
+      <button mat-raised-button color="primary" type="submit" [mat-dialog-close]="noteForm.valid"
+        [disabled]="noteForm.invalid">
+        Submit
+      </button>
+    </mat-dialog-actions>
+  </form>
+</ng-template>

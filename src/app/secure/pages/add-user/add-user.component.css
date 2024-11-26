@@ -1,0 +1,46 @@
+.container-new{
+  padding: 2% !important;
+}
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+
+}
+
+.dialog-header span{
+  color: #3f51b5;
+  margin: 0;
+}
+
+span#mat-mdc-dialog-title-0 .mat-mdc-dialog-title .mdc-dialog__title .title{
+  padding: 0 !important;
+}
+
+mat-form-field {
+  --mat-form-field-container-height: 40px;
+  --mat-form-field-filled-label-display: block;
+  --mat-form-field-container-vertical-padding: 5px;
+  --mat-form-field-filled-with-label-container-padding-top: 15px;
+  --mat-form-field-filled-with-label-container-padding-bottom: 2px;
+}
+
+.dialog-header h1 .mat-mdc-dialog-title .mdc-dialog__title .title #clicked{
+padding: 0;
+}
+.header{
+  height: 70px;
+  background-color: rgb(235, 234, 234);
+  border-bottom: solid #3f51b5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.d-flex {
+  display: flex;
+  align-items: center;
+}
+
+mat-radio-button {
+  margin-right: 10px;
+}

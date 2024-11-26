@@ -1,0 +1,20 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import 'ngx-toastr/toastr';
+/* @use "@material/chips/styles"; */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+body{
+    font-family: "Poppins", sans-serif !important;
+
+}
+.Tostertop{
+  margin-top: 2rem !important;
+}
+
+.mat-divider {
+  border-top-color: rgba(63, 81, 181, 0.1)!important;
+  --mat-divider-width: 3px !important;
+}
